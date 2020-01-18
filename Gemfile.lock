@@ -1,4 +1,11 @@
 GIT
+  remote: https://github.com/democrateam/omniauth-wordpress-oauth2-plugin
+  revision: d25fa81a16a61e27842f427ef0827c151adcd12f
+  specs:
+    omniauth-wordpress (0.0.6)
+      omniauth-oauth2
+
+GIT
   remote: https://github.com/phatworx/devise_security_extension.git
   revision: b2ee978af7d49f0fb0e7271c6ac074dfb4d39353
   specs:
@@ -659,6 +666,7 @@ DEPENDENCIES
   omniauth-google-oauth2 (~> 0.4.0)
   omniauth-rails_csrf_protection (~> 0.1.2)
   omniauth-twitter (~> 1.4.0)
+  omniauth-wordpress!
   paperclip (~> 5.2.1)
   paranoia (~> 2.4.2)
   pg (~> 0.21.0)
