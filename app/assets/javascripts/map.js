@@ -49,10 +49,9 @@
         return marker;
       };
       createPolygon = function(polygon_data) {
-        var colors, polygon;
-        colors = ["#0081aa", "#0097aa", "#0063aa", "#00baaa"];
+        var polygon;
         polygon = L.polygon(polygon_data.outline_points, {
-          color: colors[Math.floor(Math.random() * colors.length)]
+          color: polygon_data.color
         });
         if (polygon_data.heading_id) {
           polygon.on("click", openPolygonPopup);
