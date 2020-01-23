@@ -55,7 +55,7 @@ class Budget
       investments.empty?
     end
 
-    def whole_name
+    def name_with_budget
       "#{group.budget.name} - #{name}"
     end
 

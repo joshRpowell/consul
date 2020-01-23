@@ -1,13 +1,9 @@
 class GeojsonFormat < ActiveModel::Validator
-
   def validate(record)
-    if not record.geojson.blank?
-      geojson_data_hash = parse_json(record.geojson)
-
-      if not geojson_data_hash or geojson_data_hash.class != Hash or
-      not validate_geojson_format(geojson_data_hash)
-        record.errors.add(:base, 'The GeoJSON provided does not follow the correct format.
-                                  It must follow the "Polygon" or "MultiPolygon" type format.')
+    if record.geojson.present?
+      geojson = parse_json(record.geojson)
+      unless valid_format?(geojson)
+        record.errors.add(:geojson, I18n.t("admin.geographies.form.invalid_format"))
       end
     end
   end
@@ -18,9 +14,11 @@ class GeojsonFormat < ActiveModel::Validator
       JSON.parse(geojson_data) rescue nil
     end
 
-    def validate_geojson_format(geojson_data_hash)
-      geojson_data_hash.key?("geometry") &&
-      geojson_data_hash["geometry"].key?("coordinates") &&
-      geojson_data_hash["geometry"]["coordinates"].class == Array
+    def valid_format?(geojson)
+      return false unless geojson.is_a? Hash
+      return false unless geojson["geometry"].present?
+      return false unless geojson["geometry"]["coordinates"].present?
+
+      geojson["geometry"]["coordinates"].is_a? Array
     end
 end

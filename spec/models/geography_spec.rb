@@ -19,10 +19,10 @@ describe Geography do
 
   it "is not valid without correct geojson's file format" do
     invalid_geography = build(:geography,
-                               geojson: "{\"geo\":{\"type\":\"Incorrect key\",\"coordinates\":
+                               geojson: '{"geo\":{"type":"Incorrect key","coordinates":
                                                 [[40.8792937308316, -3.9259027239257],
                                                 [40.8788966596619, -3.9249047078766],
-                                                [40.8789131852224, -3.9247799675785]]}}")
+                                                [40.8789131852224, -3.9247799675785]]}}')
     expect(invalid_geography).not_to be_valid
   end
 
@@ -32,7 +32,7 @@ describe Geography do
 
       expect do
         geography.destroy
-      end.to change { described_class.count }.by(-1)
+      end.to change { Geography.count }.by(-1)
     end
 
     it "is true deleting geography, even when linked to one budget heading" do
@@ -40,7 +40,7 @@ describe Geography do
 
       expect do
         geography_with_one_related_heading.destroy
-      end.to change { described_class.count }.by(-1)
+      end.to change { Geography.count }.by(-1)
     end
 
     it "is true deleting geography, even when linked to many budget headings" do
@@ -48,7 +48,7 @@ describe Geography do
 
       expect do
         geography_with_many_related_headings.destroy
-      end.to change { described_class.count }.by(-1)
+      end.to change { Geography.count }.by(-1)
     end
   end
 

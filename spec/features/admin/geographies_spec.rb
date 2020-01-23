@@ -1,10 +1,32 @@
 require "rails_helper"
 
-feature "Admin geographies" do
-
-  background do
-    login_as(create(:administrator).user)
+describe "Admin geographies" do
+  let(:valid_geojson) do
+    '{
+       "geometry": {
+         "type": "Polygon",
+         "coordinates": [
+           [40.9192937308316, -3.9259027239257],
+           [40.9188966596619, -3.9239047078766],
+           [40.9189131852224, -3.8947799675785]
+         ]
+       }
+    }'
   end
+  let(:invalid_geojson) do
+    '{
+       "geoADmetries": {
+         "type": "Polygon",
+         "crds": [
+           [40.9192937308316, -3.9259027239257],
+           [40.9188966596619, -3.9239047078766],
+           [40.9189131852224, -3.8947799675785]
+         ]
+       }
+    }'
+  end
+
+  before { login_as(create(:administrator).user) }
 
   scenario "Show names of geographies on index" do
     district_11 = create(:geography, name: "District 11", color: "#0081aa")
@@ -19,7 +41,7 @@ feature "Admin geographies" do
   end
 
   scenario 'Show "No related Headings" for geography without relate heading' do
-    district_11 = create(:geography, name: "District 11", color: "#0081aa")
+    create(:geography, name: "District 11", color: "#0081aa")
 
     visit admin_geographies_path
 
@@ -31,13 +53,12 @@ feature "Admin geographies" do
     heading_1 = create(:budget_heading, group: group)
     heading_2 = create(:budget_heading, group: group)
 
-    district_11 = create(:geography, name: "District 11", color: "#0081aa",
-                         headings: [heading_1, heading_2])
+    create(:geography, name: "District 11", color: "#0081aa", headings: [heading_1, heading_2])
 
     visit admin_geographies_path
 
-    expect(page).to have_content(heading_1.whole_name)
-    expect(page).to have_content(heading_2.whole_name)
+    expect(page).to have_content(heading_1.name_with_budget)
+    expect(page).to have_content(heading_2.name_with_budget)
   end
 
   scenario "Create new geography" do
@@ -49,16 +70,13 @@ feature "Admin geographies" do
     click_link "Create geography"
 
     fill_in "geography_name", with: "District 11"
-    fill_in "geography_geojson", with: "{\"geometry\":{\"type\":\"Polygon\",\"coordinates\":
-                                               [[40.9192937308316, -3.9259027239257],
-                                               [40.9188966596619, -3.9239047078766],
-                                               [40.9189131852224, -3.8947799675785]]}}"
-    select heading_1.whole_name, from: "geography_heading_ids"
+    fill_in "geography_geojson", with: valid_geojson
+    select(heading_1.name_with_budget, from: "geography_heading_ids")
 
     click_button "Create Geography"
+    expect(page).to have_content "Geography created successfully!"
 
     visit admin_geographies_path
-
     expect(page).to have_content "District 11"
   end
 
@@ -70,16 +88,13 @@ feature "Admin geographies" do
     click_link "Create geography"
 
     fill_in "geography_name", with: "District 30"
-    fill_in "geography_geojson", with: "{\"geometries\":{\"type\":\"Polygon\",\"coords\":
-                                               [[40.9092937308316, -3.8059027239257],
-                                               [[40.9092937308316, -3.8159027239257],
-                                               [40.9089131852224, -3.8247799675785]]}}"
+    fill_in "geography_geojson", with: invalid_geojson
 
     click_button "Create Geography"
 
-    expect(page).to have_content "1 error prohibited this geography from being saved:"
-    expect(page).to have_content 'The GeoJSON provided does not follow the correct format.
-                                  It must follow the "Polygon" or "MultiPolygon" type format.'
+    expect(page).not_to have_content "Geography created successfully!"
+    expect(page).to have_css(".is-invalid-label", text: "Geojson")
+    expect(page).to have_css("small.form-error", text: 'The GeoJSON provided does not follow the correct format. It must follow the "Polygon" or "MultiPolygon" type format.')
   end
 
   scenario "Edit geography with no associated headings" do
@@ -100,8 +115,7 @@ feature "Admin geographies" do
 
   scenario "Edit geography with associated headings" do
     heading_1 = create(:budget_heading)
-    geography = create(:geography, name: "Delete me!",
-                       color: "#0088aa", headings: [heading_1])
+    geography = create(:geography, name: "Delete me!", color: "#0088aa", headings: [heading_1])
 
     visit admin_geographies_path
 
@@ -123,16 +137,13 @@ feature "Admin geographies" do
 
     within("#geography_#{geography.id}") { click_link "Edit" }
 
-    fill_in "geography_geojson", with: "{\"geoADmetries\":{\"type\":\"Polygon\",\"crds\":
-                                               [[41.9092937308316, -3.8059027239257],
-                                               [[41.9092937308316, -3.8159027239257],
-                                               [41.9089131852224, -3.8247799675785]]}}"
+    fill_in "geography_geojson", with: invalid_geojson
 
     click_button "Update Geography"
 
-    expect(page).to have_content "1 error prohibited this geography from being saved:"
-    expect(page).to have_content 'The GeoJSON provided does not follow the correct format.
-                                  It must follow the "Polygon" or "MultiPolygon" type format.'
+    expect(page).not_to have_content "Geography updated successfully!"
+    expect(page).to have_css(".is-invalid-label", text: "Geojson")
+    expect(page).to have_css("small.form-error", text: 'The GeoJSON provided does not follow the correct format. It must follow the "Polygon" or "MultiPolygon" type format.')
   end
 
   scenario "Delete geography with no associated headings" do
@@ -151,19 +162,18 @@ feature "Admin geographies" do
 
   scenario "Delete geography with associated headings" do
     heading_1 = create(:budget_heading)
-    geography = create(:geography, name: "Delete me!",
-                       color: "#0122ab", headings: [heading_1])
+    geography = create(:geography, name: "Delete me!", color: "#0122ab", headings: [heading_1])
 
     visit admin_geographies_path
 
     expect(page).to have_content("Delete me!")
-    expect(page).to have_content(heading_1.whole_name)
+    expect(page).to have_content(heading_1.name_with_budget)
 
     within("#geography_#{geography.id}") { click_link "Delete" }
 
     expect(page).to have_content "Geography successfully deleted"
     expect(page).not_to have_content("Delete me!")
-    expect(page).not_to have_content(heading_1.whole_name)
+    expect(page).not_to have_content(heading_1.name_with_budget)
     expect(Geography.where(id: geography.id)).to be_empty
   end
 end

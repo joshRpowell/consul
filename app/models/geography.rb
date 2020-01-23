@@ -22,12 +22,8 @@ class Geography < ApplicationRecord
   end
 
   def parsed_outline_points
-    parsed_outline_points = []
-
-    if not geojson.blank?
-      geojson_data_hash = JSON.parse(geojson)
-
-      coordinates_array = geojson_data_hash["geometry"]["coordinates"]
+    if geojson.present?
+      coordinates_array = JSON.parse(geojson)["geometry"]["coordinates"]
 
       if geojson.match(/"coordinates"\s*:\s*\[{4}/)
         coordinates_array = coordinates_array.reduce([], :concat).reduce([], :concat)
@@ -35,15 +31,9 @@ class Geography < ApplicationRecord
         coordinates_array = coordinates_array.reduce([], :concat)
       end
 
-      coordinates_array.each do |coordinates|
-        point_coordinate = []
-        point_coordinate << coordinates.second
-        point_coordinate << coordinates.first
-        parsed_outline_points << point_coordinate
-      end
-      #parsed_outline_points = coordinates_array.map { |coordinates| [coordinates.second, coordinates.first] }
+      coordinates_array.map { |coordinates| [coordinates.second, coordinates.first] }
+    else
+      []
     end
-
-    parsed_outline_points
   end
 end
