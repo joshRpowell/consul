@@ -255,6 +255,10 @@
           <%= link_to t("admin.menu.site_customization.content_blocks"), admin_site_customization_content_blocks_path %>
         </li>
 
+        <li <%= "class=is-active" if controller_name == "geographies" %>>
+          <%= link_to t("admin.menu.geographies"), admin_geographies_path %>
+        </li>
+
         <li <%= "class=is-active" if submenu_local_census_records? %>>
           <%= link_to t("admin.menu.local_census_records"), admin_local_census_records_path %>
         </li>
@@ -274,10 +278,6 @@
           <%= link_to admin_dashboard_administrator_tasks_path do %>
             <%= t("admin.menu.administrator_tasks") %>
           <% end %>
-        </li>
-
-        <li <%= "class=is-active" if controller_name == "content_blocks" %>>
-          <%= link_to t("admin.menu.geographies"), admin_geographies_path %>
         </li>
       </ul>
     </li>
