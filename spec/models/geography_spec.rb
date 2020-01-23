@@ -66,13 +66,13 @@ describe Geography do
     end
   end
 
-  describe "#geographies_with_active_headings" do
-    it "returns 1 active geography" do
-      create(:geography, :with_active_heading)
-      expect(described_class.geographies_with_active_headings.size).to eq(1)
+  describe "#for_current_budget" do
+    it "returns empty array if no active geographies" do
+      create(:geography)
+      expect(Geography.for_current_budget).to be_empty
     end
 
-    it "returns 4 active geographies" do
+    it "returns all active geographies" do
       active_group = create(:budget_group, :accepting_budget)
       drafting_group = create(:budget_group, :drafting_budget)
 
@@ -83,15 +83,18 @@ describe Geography do
       not_active_heading_1 = create(:budget_heading, group: drafting_group)
       not_active_heading_2 = create(:budget_heading, group: drafting_group)
 
-      active_geography_1 = create(:geography, headings: [active_heading_1,
-                                                         not_active_heading_1])
+      active_geography_1 = create(:geography, headings: [active_heading_1, not_active_heading_1])
       active_geography_2 = create(:geography, headings: [active_heading_2])
       active_geography_3 = create(:geography, headings: [active_heading_3])
       active_geography_4 = create(:geography, headings: [active_heading_4])
-      not_active_geography_1 = create(:geography, headings: [not_active_heading_2])
+      not_active_geography = create(:geography, headings: [not_active_heading_2])
 
-      expect(described_class.geographies_with_active_headings.size).to eq(4)
+      expect(Geography.for_current_budget.size).to be 4
+      expect(Geography.for_current_budget).to include active_geography_1
+      expect(Geography.for_current_budget).to include active_geography_2
+      expect(Geography.for_current_budget).to include active_geography_3
+      expect(Geography.for_current_budget).to include active_geography_4
+      expect(Geography.for_current_budget).not_to include not_active_geography
     end
   end
-
 end

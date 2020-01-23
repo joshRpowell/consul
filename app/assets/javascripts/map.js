@@ -12,7 +12,7 @@
       });
     },
     initializeMap: function(element) {
-      var addMarkerInvestments, clearFormfields, createMarker, editable, getPopupContent, latitudeInputSelector, longitudeInputSelector, map, mapAttribution, mapCenterLatLng, mapCenterLatitude, mapCenterLongitude, mapTilesProvider, marker, markerIcon, markerLatitude, markerLongitude, moveOrPlaceMarker, openMarkerPopup, removeMarker, removeMarkerSelector, updateFormfields, zoom, zoomInputSelector, addGeographyPolygons, createPolygon, openPolygonPopup, getPolygonPopupContent;
+      var addMarkerInvestments, clearFormfields, createMarker, editable, getPopupContent, latitudeInputSelector, longitudeInputSelector, map, mapAttribution, mapCenterLatLng, mapCenterLatitude, mapCenterLongitude, mapTilesProvider, marker, markerIcon, markerLatitude, markerLongitude, moveOrPlaceMarker, openMarkerPopup, removeMarker, removeMarkerSelector, updateFormfields, zoom, zoomInputSelector, addGeographyPolygons, createPolygon, openPolygonPopup;
       App.Map.cleanInvestmentCoordinates(element);
       mapCenterLatitude = $(element).data("map-center-latitude");
       mapCenterLongitude = $(element).data("map-center-longitude");
@@ -53,9 +53,9 @@
         polygon = L.polygon(polygon_data.outline_points, {
           color: polygon_data.color
         });
-        if (polygon_data.heading_id) {
+        if (polygon_data.headings.length > 0) {
           polygon.on("click", openPolygonPopup);
-          polygon.options["heading_id"] = polygon_data.heading_id;
+          polygon.options["headings"] = polygon_data.headings;
           polygon.options["fillOpacity"] = 0.3;
         } else {
           polygon.options["fillOpacity"] = 0;
@@ -104,18 +104,12 @@
       };
       openPolygonPopup = function(e) {
         var polygon = e.target;
-        if (polygon.options["heading_id"]) {
-          return $.ajax("headings/" + polygon.options["heading_id"] + "/json_data", {
-            type: "GET",
-            dataType: "json",
-            success: function(data) {
-              return e.target.bindPopup(getPolygonPopupContent(data)).openPopup();
-            }
+        if (polygon.options["headings"].length > 0) {
+          var data = polygon.options["headings"].map(function(heading) {
+            return heading + "<br>"
           });
+          return e.target.bindPopup(data.join("").slice(0, -4)).openPopup();
         }
-      };
-      getPolygonPopupContent = function(data) {
-        return "<a href='/budgets/" + data["budget_id"] + "/investments?heading_id=" + data["heading_id"] + "'>" + data["heading_name"] + "</a>";
       };
       mapCenterLatLng = new L.LatLng(mapCenterLatitude, mapCenterLongitude);
       map = L.map(element.id).setView(mapCenterLatLng, zoom);

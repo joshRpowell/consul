@@ -5,20 +5,12 @@ class Geography < ApplicationRecord
 
   has_many :headings, class_name: Budget::Heading, dependent: :nullify
 
-  def self.geographies_with_active_headings
-    active_headings = {}
-
+  def self.for_current_budget
     if Budget.current.present?
-      Budget.current.headings.each do |active_heading|
-        if active_heading.geography
-          active_headings[active_heading.geography_id] = active_heading.id
-        end
-      end
+      Budget.current.headings.select { |heading| heading.geography.present? }.map(&:geography)
+    else
+      []
     end
-
-    active_headings
-    #headings_with_geographies = Budget.current.headings.select { |heading| heading.geograhpy.present? }
-    #headings_with_geographies.map { |heading| [heading.geography_id, heading.id] }.to_h
   end
 
   def parsed_outline_points
