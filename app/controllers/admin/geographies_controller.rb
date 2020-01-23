@@ -2,8 +2,6 @@ class Admin::GeographiesController < Admin::BaseController
   before_action :set_geography, only: [:show, :edit, :update, :destroy]
   before_action :set_headings, only: [:new, :edit, :update, :create]
 
-  respond_to :html, :js
-
   def index
     @geographies = Geography.all.order("LOWER(name)")
   end

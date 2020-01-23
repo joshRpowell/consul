@@ -5,8 +5,6 @@ section "Creating Settings" do
     "facebook_handle": "CONSUL",
     "feature.featured_proposals": "true",
     "feature.map": "true",
-    "map.latitude": 40.41,
-    "map.longitude": -3.7,
     "instagram_handle": "CONSUL",
     "mailer_from_address": "noreply@consul.dev",
     "mailer_from_name": "CONSUL",

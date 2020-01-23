@@ -87,7 +87,6 @@
 //= require cookies
 //= require columns_selector
 //= require budget_edit_associations
-//= require geographies
 
 var initialize_modules = function() {
   "use strict";
@@ -142,7 +141,6 @@ var initialize_modules = function() {
     App.ColumnsSelector.initialize();
   }
   App.BudgetEditAssociations.initialize();
-	App.Geographies.initialize();
 };
 
 $(function() {
