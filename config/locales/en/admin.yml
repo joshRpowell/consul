@@ -639,7 +639,7 @@ en:
       proposals_topics: Proposals topics
       budgets: Participatory budgets
       geozones: Manage geozones
-      geographies: Manage geographies
+      geographies: "Manage geographies"
       hidden_comments: Hidden comments
       hidden_debates: Hidden debates
       hidden_proposals: Hidden proposals
@@ -1331,24 +1331,26 @@ en:
         error: This geozone can't be deleted since there are elements attached to it
     geographies:
       index:
-        title: Geographies
-        create: Create geography
-        edit: Edit
-        delete: Delete
-        no_related_headings: No related Headings
-      geography:
-        name: Name
-        related_headings: Related Headings
-        geojson: Geojson
-        color: Geography color
-      edit:
-        editing: Editing geography
-        back: Go back
-      new:
-        back: Go back
-        creating: Create geography
+        title: "Geographies"
+        create: "Create geography"
+        edit: "Edit"
+        delete: "Delete"
+        no_related_headings: "No related Headings"
+      form:
+        name: "Name"
+        related_headings: "Related Headings"
+        geojson: "Geojson"
+        color: "Color"
+        edit: "Edit geography"
+        create: "Create geography"
+        invalid_format: "The GeoJSON provided does not follow the correct format. It must follow the \"Polygon\" or \"MultiPolygon\" type format."
+      create:
+        text: 
+        notice: "Geography created successfully!"
+      update:
+        notice: "Geography updated successfully!"
       delete:
-        success: Geography successfully deleted
+        notice: "Geography deleted successfully!"
     signature_sheets:
       author: Author
       created_at: Creation date

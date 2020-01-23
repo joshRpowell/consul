@@ -107,6 +107,7 @@ describe "Admin geographies" do
     fill_in "geography_name", with: "New geography name"
 
     click_button "Update Geography"
+    expect(page).to have_content "Geography updated successfully!"
 
     within("#geography_#{geography.id}") do
       expect(page).to have_content "New geography name"
@@ -124,6 +125,7 @@ describe "Admin geographies" do
     fill_in "geography_name", with: "New geography name"
 
     click_button "Update Geography"
+    expect(page).to have_content "Geography updated successfully!"
 
     within("#geography_#{geography.id}") do
       expect(page).to have_content "New geography name"
@@ -155,7 +157,7 @@ describe "Admin geographies" do
 
     within("#geography_#{geography.id}") { click_link "Delete" }
 
-    expect(page).to have_content "Geography successfully deleted"
+    expect(page).to have_content "Geography deleted successfully!"
     expect(page).not_to have_content("Delete me!")
     expect(Geography.where(id: geography.id)).to be_empty
   end
@@ -171,7 +173,7 @@ describe "Admin geographies" do
 
     within("#geography_#{geography.id}") { click_link "Delete" }
 
-    expect(page).to have_content "Geography successfully deleted"
+    expect(page).to have_content "Geography deleted successfully!"
     expect(page).not_to have_content("Delete me!")
     expect(page).not_to have_content(heading_1.name_with_budget)
     expect(Geography.where(id: geography.id)).to be_empty
